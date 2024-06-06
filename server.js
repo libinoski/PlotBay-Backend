@@ -1,3 +1,5 @@
+//server.js
+
 require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
@@ -5,7 +7,7 @@ const morgan = require('morgan');
 const helmet = require('helmet');
 const adminRoutes = require('./app/routes/admin-routes');
 const userRoutes = require('./app/routes/user-routes');
-const corsOptions = require('./app/config/corsOptions'); // Assuming you created a config file
+const corsOptions = require('./app/config/corsOptions');
 
 const app = express();
 

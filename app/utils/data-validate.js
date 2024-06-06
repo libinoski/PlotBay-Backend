@@ -1,3 +1,5 @@
+//data-validate.js
+
 // Check if a value is empty, null, or undefined
 function isEmptyOrNullUndefined(value) {
     return value === '' || value === null || value === undefined;

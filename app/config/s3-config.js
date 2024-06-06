@@ -1,9 +1,10 @@
 // s3-config.js
 
-const { S3Client, DeleteObjectCommand } = require("@aws-sdk/client-s3");
+// Import necessary AWS SDK modules and dotenv for environment variables
+const { S3Client, DeleteObjectCommand, PutObjectCommand } = require("@aws-sdk/client-s3");
 require("dotenv").config();
 
-// Bucket configuration
+// Create an S3 client instance with AWS credentials from environment variables
 const s3Client = new S3Client({
   region: process.env.AWS_REGION,
   credentials: {
@@ -12,7 +13,7 @@ const s3Client = new S3Client({
   },
 });
 
-// Function to delete image from S3
+// Function to delete an image from the S3 bucket in case of error
 async function deleteImageFromS3(imageKey) {
   const params = {
     Bucket: process.env.S3_BUCKET_NAME,
@@ -26,4 +27,27 @@ async function deleteImageFromS3(imageKey) {
   }
 }
 
-module.exports = { s3Client, deleteImageFromS3 };
+// Function to upload an admin image to the S3 bucket
+async function uploadAdminImage(adminImageFile, fileName, mimeType) {
+  return new Promise(async (resolve, reject) => {
+    const uploadParams = {
+      Bucket: process.env.S3_BUCKET_NAME,
+      Key: `adminImages/${fileName}`,
+      Body: adminImageFile.buffer,
+      ACL: "public-read",
+      ContentType: mimeType,
+    };
+
+    try {
+      const command = new PutObjectCommand(uploadParams);
+      await s3Client.send(command);
+      const fileLocation = `https://${process.env.S3_BUCKET_NAME}.s3.${process.env.AWS_REGION}.amazonaws.com/${uploadParams.Key}`;
+      resolve(fileLocation);
+    } catch (uploadError) {
+      reject(uploadError);
+    }
+  });
+}
+
+// Export S3 client instance, deleteImageFromS3, and uploadAdminImage functions for external use
+module.exports = { s3Client, deleteImageFromS3, uploadAdminImage };
