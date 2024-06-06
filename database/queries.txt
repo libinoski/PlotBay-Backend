@@ -1,0 +1,15 @@
+CREATE TABLE Admin (
+    adminId INT PRIMARY KEY AUTO_INCREMENT,
+    adminName VARCHAR(255) NOT NULL,
+    adminEmail VARCHAR(255) NOT NULL UNIQUE,
+    adminMobile VARCHAR(20) NOT NULL,
+    adminImage VARCHAR(2000) NOT NULL,
+    adminPassword VARCHAR(2000) NOT NULL,
+    deleteStatus INT DEFAULT 0 NOT NULL,
+    updatedStatus INT DEFAULT 0 NOT NULL,
+    updatedDate DATETIME DEFAULT NULL,
+    passwordUpdatedStatus INT DEFAULT 0 NOT NULL,
+    registeredDate DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    isActive INT DEFAULT 1 NOT NULL
+);
+

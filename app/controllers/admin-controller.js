@@ -5,7 +5,7 @@ const dataValidator = require("../utils/data-validate");
 const fs = require("fs");
 const { s3Client, deleteImageFromS3 } = require("../config/s3-config");
 const transporter = require("../config/email-config");
-const emailContent = require("../utils/email-contents"); // Importing email content
+const emailContent = require("../utils/email-contents");
 //
 //
 //
@@ -49,12 +49,6 @@ exports.register = async (req, res) => {
         validationResults.errors["adminMobile"] = [mobileValidation.message];
       }
 
-      // Address validation
-      const addressValidation = dataValidator.isValidAddress(adminData.adminAddress);
-      if (!addressValidation.isValid) {
-        validationResults.isValid = false;
-        validationResults.errors["adminAddress"] = [addressValidation.message];
-      }
 
       // Password validation
       const passwordValidation = dataValidator.isValidPassword(adminData.adminPassword);
