@@ -1,9 +1,7 @@
-// registrationController.js
-
 const path = require("path");
 const jwt = require("jsonwebtoken");
 const { admin } = require("../models/admin-model");
-const dataValidator = require("../config/data-validate");
+const dataValidator = require("../utils/data-validate");
 const fs = require("fs");
 const { s3Client, deleteImageFromS3 } = require("../config/s3-config");
 const transporter = require("../config/email-config");
