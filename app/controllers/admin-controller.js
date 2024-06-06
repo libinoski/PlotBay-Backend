@@ -14,8 +14,6 @@ const emailContent = require("../utils/email-contents");
 exports.register = async (req, res) => {
   try {
     const adminData = req.body;
-
-
     // Check and manipulate adminMobile if present
     if (adminData.adminMobile) {
       adminData.adminMobile = adminData.adminMobile.replace(/\s/g, '');
