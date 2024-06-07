@@ -119,26 +119,29 @@ function isValidCost(cost) {
 function isValidFile(file) {
     const messages = [];
     
-    if (!file || isEmptyOrNullUndefined(file.name)) {
-        messages.push("File is required.");
-    } else {
-        // Check file size (1 MB = 1,048,576 bytes)
-        if (file.size > 1048576) {
-            messages.push("File size should be less than or equal to 1 MB.");
-        }
+    // Check if file is null or empty
+    if (!file || !file.originalname || file.size === 0) {
+        messages.push("File is empty or not provided.");
+        return { isValid: false, message: messages.join(' ') };
+    }
     
-        // Extract file extension
-        const fileExtension = file.name.split('.').pop().toLowerCase();
-    
-        // Check allowed extensions
-        const allowedExtensions = ['jpg', 'jpeg', 'png', 'webp', 'heif'];
-        if (!allowedExtensions.includes(fileExtension)) {
-            messages.push("File extension not allowed. Allowed extensions are: jpg, jpeg, png, webp, heif.");
-        }
+    // Check file size (1 MB = 1,048,576 bytes)
+    if (file.size > 1048576) {
+        messages.push("File size should be less than or equal to 1 MB.");
     }
 
+    // Check file extension
+    const allowedExtensions = ['jpg', 'jpeg', 'png', 'webp', 'heif'];
+    const fileExtension = file.originalname.split('.').pop().toLowerCase();
+    if (!allowedExtensions.includes(fileExtension)) {
+        messages.push("File extension not allowed. Allowed extensions are: jpg, jpeg, png, webp, heif.");
+    }
+    
     return { isValid: messages.length === 0, message: messages.join(' ') || 'File is valid.' };
 }
+
+
+
 
 // Validate comment
 function isValidComment(comment) {

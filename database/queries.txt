@@ -5,11 +5,11 @@ CREATE TABLE Admin (
     adminMobile VARCHAR(20) NOT NULL,
     adminImage VARCHAR(2000) NOT NULL,
     adminPassword VARCHAR(2000) NOT NULL,
-    deleteStatus INT DEFAULT 0 NOT NULL,
-    updatedStatus INT DEFAULT 0 NOT NULL,
-    updatedDate DATETIME DEFAULT NULL,
-    passwordUpdatedStatus INT DEFAULT 0 NOT NULL,
     registeredDate DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    isActive INT DEFAULT 1 NOT NULL
+    updatedDate DATETIME DEFAULT NULL,
+    updatedStatus INT DEFAULT 0 NOT NULL,
+    passwordUpdatedStatus INT DEFAULT 0 NOT NULL,
+    isActive INT DEFAULT 1 NOT NULL,
+    deleteStatus INT DEFAULT 0 NOT NULL
 );
 

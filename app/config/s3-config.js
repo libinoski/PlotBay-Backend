@@ -13,19 +13,7 @@ const s3Client = new S3Client({
   },
 });
 
-// Function to delete an image from the S3 bucket in case of error
-async function deleteImageFromS3(imageKey) {
-  const params = {
-    Bucket: process.env.S3_BUCKET_NAME,
-    Key: imageKey
-  };
-  try {
-    await s3Client.send(new DeleteObjectCommand(params));
-    console.log("Image deleted from S3:", imageKey);
-  } catch (error) {
-    console.error("Error deleting image from S3:", error);
-  }
-}
+
 
 // Function to upload an admin image to the S3 bucket
 async function uploadAdminImage(adminImageFile, fileName, mimeType) {
@@ -50,4 +38,4 @@ async function uploadAdminImage(adminImageFile, fileName, mimeType) {
 }
 
 // Export S3 client instance, deleteImageFromS3, and uploadAdminImage functions for external use
-module.exports = { s3Client, deleteImageFromS3, uploadAdminImage };
+module.exports = { s3Client, uploadAdminImage };
