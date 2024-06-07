@@ -75,13 +75,12 @@ exports.register = async (req, res) => {
         }
 
         // Validate admin image if provided
-        if (adminImageFile) {
           const imageValidation = dataValidator.isValidFile(adminImageFile);
           if (!imageValidation.isValid) {
             validationResults.isValid = false;
             validationResults.errors["adminImage"] = [imageValidation.message];
           }
-        }
+    
 
         return validationResults;
       }

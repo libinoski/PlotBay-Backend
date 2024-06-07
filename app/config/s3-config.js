@@ -1,7 +1,7 @@
 // s3-config.js
 
 // Import necessary AWS SDK modules and dotenv for environment variables
-const { S3Client, DeleteObjectCommand, PutObjectCommand } = require("@aws-sdk/client-s3");
+const { S3Client, PutObjectCommand } = require("@aws-sdk/client-s3");
 require("dotenv").config();
 
 // Create an S3 client instance with AWS credentials from environment variables
@@ -12,7 +12,6 @@ const s3Client = new S3Client({
     secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
   },
 });
-
 
 
 // Function to upload an admin image to the S3 bucket

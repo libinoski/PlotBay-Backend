@@ -1,8 +1,14 @@
 //data-validate.js
 
-// Check if a value is empty, null, or undefined
+// Check if a value is empty, null, undefined, or an empty object
 function isEmptyOrNullUndefined(value) {
-    return value === '' || value === null || value === undefined;
+    if (value === '' || value === null || value === undefined) {
+        return true;
+    }
+    if (typeof value === 'object' && Object.keys(value).length === 0) {
+        return true;
+    }
+    return false;
 }
 
 // Validate password
@@ -102,7 +108,7 @@ function isValidName(name) {
 // Validate cost
 function isValidCost(cost) {
     const messages = [];
-    const cleanedCost = cost ? cost.replace(/\s/g, '') : ''; // Remove white spaces if not null or undefined
+    const cleanedCost = cost ? cost.replace(/\s/g, '') : ''; 
     
     if (isEmptyOrNullUndefined(cleanedCost)) {
         messages.push("Cost is required.");
@@ -119,29 +125,23 @@ function isValidCost(cost) {
 function isValidFile(file) {
     const messages = [];
     
-    // Check if file is null or empty
-    if (!file || !file.originalname || file.size === 0) {
-        messages.push("File is empty or not provided.");
-        return { isValid: false, message: messages.join(' ') };
-    }
-    
-    // Check file size (1 MB = 1,048,576 bytes)
-    if (file.size > 1048576) {
+    if (isEmptyOrNullUndefined(file)) {
+        messages.push("Please upload a file.");
+    } else if (file.size && file.size > 1048576) {
         messages.push("File size should be less than or equal to 1 MB.");
     }
 
     // Check file extension
-    const allowedExtensions = ['jpg', 'jpeg', 'png', 'webp', 'heif'];
-    const fileExtension = file.originalname.split('.').pop().toLowerCase();
-    if (!allowedExtensions.includes(fileExtension)) {
-        messages.push("File extension not allowed. Allowed extensions are: jpg, jpeg, png, webp, heif.");
+    if (!isEmptyOrNullUndefined(file)) {
+        const allowedExtensions = ['jpg', 'jpeg', 'png', 'webp', 'heif'];
+        const fileExtension = file.originalname.split('.').pop().toLowerCase();
+        if (!allowedExtensions.includes(fileExtension)) {
+            messages.push("File extension not allowed. Allowed extensions are: jpg, jpeg, png, webp, heif.");
+        }
     }
     
     return { isValid: messages.length === 0, message: messages.join(' ') || 'File is valid.' };
 }
-
-
-
 
 // Validate comment
 function isValidComment(comment) {
@@ -229,7 +229,6 @@ function isValidArea(area) {
     return { isValid: messages.length === 0, message: messages.join(' ') || 'Area is valid.' };
 }
 
-
 // Validate country
 function isValidCountry(country) {
     const messages = [];
@@ -268,7 +267,6 @@ function isValidState(state) {
     return { isValid: messages.length === 0, message: messages.join(' ') || 'State is valid.' };
 }
 
-
 // Validate Aadhar number
 function isValidAadharNumber(aadharNumber) {
     const messages = [];
@@ -289,7 +287,6 @@ function isValidAadharNumber(aadharNumber) {
     return { isValid: messages.length === 0, message: messages.join(' ') || 'Aadhar number is valid.' };
 }
 
-
 // Export the validation functions
 module.exports = {
     isValidPassword,
@@ -306,5 +303,4 @@ module.exports = {
     isValidCountry,
     isValidState,
     isValidAadharNumber
-
 };

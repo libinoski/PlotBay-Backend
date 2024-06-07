@@ -1,21 +1,20 @@
 const emailContent = {
-    subject: "Your Registration Details",
-    text: `Dear {{adminName}},
-          
-  Welcome to MedInsCare!
-          
-  Congratulations on successfully registering your admin. With MedInsCare, you can efficiently manage staff, patients, and insurance providers all in one place.
-          
-  We're here to support you every step of the way. If you have any questions or need assistance, don't hesitate to reach out to our team.
-          
-  Thank you for choosing MedInsCare. Let's work together to provide exceptional healthcare services.
-          
-  Best regards,
-  Libin Jacob
-  Admin 
-  MedInsCare
-  `,
-  };
-  
-  module.exports = emailContent;
-  
+  subject: "Welcome to PlotBay - Your Registration Details",
+  text: `Dear {{adminName}},
+
+Welcome to PlotBay! 
+
+We are delighted to have you as our founding admin, leading the way in shaping PlotBay's future.
+
+Congratulations on successfully registering as our esteemed admin. Your leadership will be pivotal in guiding PlotBay to success.
+
+Feel free to explore our platform at your own pace. As our admin, you have full autonomy over your actions; no assistance is required.
+
+Once again, welcome aboard, {{adminName}}! We're excited to see the impact you'll make on PlotBay.
+
+Best regards,
+The PlotBay Team
+`,
+};
+
+module.exports = emailContent;
