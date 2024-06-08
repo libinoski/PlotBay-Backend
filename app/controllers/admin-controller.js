@@ -1,40 +1,18 @@
-// Import required modules
+//admin-controller.js
+
 const path = require("path");
-const fs = require("fs");
 const { Admin } = require("../models/admin-model");
 const dataValidator = require("../utils/data-validate");
 const { uploadAdminImage } = require("../config/s3-config");
 const transporter = require("../config/email-config");
 const emailContent = require("../utils/email-contents");
-const multer = require("multer");
+const { handleAdminImageUpload } = require("../config/multer-config");
+const { handleValidationError, handleDatabaseConflict } = require("../utils/error-handlers");
 
-// Endpoint function for admin registration
 exports.register = async (req, res) => {
   try {
-    // Set up multer storage
-    const storage = multer.memoryStorage();
-    const upload = multer({ storage: storage }).single("adminImage");
-
     // Handle file upload
-    upload(req, res, async function (err) {
-      if (err instanceof multer.MulterError) {
-        // Multer error
-        console.log("Multer error:", err);
-        return res.status(400).json({
-          status: "failed",
-          message: "File upload error",
-          error: err.message,
-        });
-      } else if (err) {
-        // Internal server error
-        console.log("Internal server error:", err);
-        return res.status(500).json({
-          status: "failed",
-          message: "Internal server error",
-          error: err.message,
-        });
-      }
-
+    handleAdminImageUpload(req, res, async function () {
       // Extract data from request
       const adminData = req.body;
       const adminImageFile = req.file;
@@ -73,14 +51,12 @@ exports.register = async (req, res) => {
           validationResults.isValid = false;
           validationResults.errors["adminPassword"] = [passwordValidation.message];
         }
-
-        // Validate admin image if provided
+        
           const imageValidation = dataValidator.isValidFile(adminImageFile);
           if (!imageValidation.isValid) {
             validationResults.isValid = false;
             validationResults.errors["adminImage"] = [imageValidation.message];
           }
-    
 
         return validationResults;
       }
@@ -88,30 +64,21 @@ exports.register = async (req, res) => {
       // Validate admin registration data
       const validationResults = validateAdminRegistration(adminData, adminImageFile);
       if (!validationResults.isValid) {
-        // Handle validation errors
-        if (adminImageFile && adminImageFile.path) {
-          fs.unlinkSync(adminImageFile.path);
-        }
-        return res.status(400).json({
-          status: "failed",
-          message: "Validation failed",
-          errors: validationResults.errors,
-        });
+        // Handle validation errors using the reusable function
+        return handleValidationError(res, validationResults.errors);
       }
 
       try {
-        // Register admin
-        const registrationResponse = await Admin.register(adminData);
-
-        // Upload admin image if provided
-        let fileLocation;
+        let fileLocation = '';
         if (adminImageFile) {
           const fileName = `adminImage-${Date.now()}${path.extname(adminImageFile.originalname)}`;
           const mimeType = adminImageFile.mimetype;
           fileLocation = await uploadAdminImage(adminImageFile, fileName, mimeType);
-          registrationResponse.adminImage = fileLocation;
+          adminData.adminImage = fileLocation; // Assign admin image file location to adminData
         }
 
+        // Register admin and call model function
+        const registrationResponse = await Admin.register(adminData);
         // Send registration email
         const mailOptions = {
           from: process.env.EMAIL_USER,
@@ -128,23 +95,16 @@ exports.register = async (req, res) => {
           }
         });
 
-        // Respond with success message
+        // Respond with success message 
         return res.status(200).json({
           status: "success",
           message: "Admin registered successfully",
           data: registrationResponse,
         });
       } catch (error) {
-        // Handle registration errors
-        if (error.name === "ValidationError") {
-          if (adminImageFile && adminImageFile.path) {
-            fs.unlinkSync(adminImageFile.path);
-          }
-          return res.status(400).json({
-            status: "failed",
-            message: "Validation failed",
-            errors: error.errors
-          });
+        // Handle registration errors from model
+        if (error.name === "ModelError") {
+          return handleDatabaseConflict(res, error.errors);
         } else {
           return res.status(500).json({
             status: "failed",

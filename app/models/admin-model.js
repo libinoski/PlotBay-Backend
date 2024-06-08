@@ -1,3 +1,4 @@
+//admin-model.js
 const bcrypt = require("bcrypt");
 const db = require("../../database/db");
 const { promisify } = require("util");
@@ -40,7 +41,7 @@ Admin.register = async (newAdmin) => {
     }
 
     if (Object.keys(errors).length > 0) {
-      throw { name: "ValidationError", errors: errors };
+      throw { name: "ModelError", errors: errors };
     }
 
     // Hash the password
