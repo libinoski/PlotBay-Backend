@@ -15,7 +15,7 @@ const s3Client = new S3Client({
 
 
 // Function to upload an admin image to the S3 bucket
-async function uploadAdminImage(adminImageFile, fileName, mimeType) {
+async function uploadAdminImageToS3(adminImageFile, fileName, mimeType) {
   return new Promise(async (resolve, reject) => {
     const uploadParams = {
       Bucket: process.env.S3_BUCKET_NAME,
@@ -37,4 +37,4 @@ async function uploadAdminImage(adminImageFile, fileName, mimeType) {
 }
 
 // Export S3 client instance, deleteImageFromS3, and uploadAdminImage functions for external use
-module.exports = { s3Client, uploadAdminImage };
+module.exports = { s3Client, uploadAdminImageToS3 };
