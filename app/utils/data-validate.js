@@ -36,17 +36,16 @@ function isValidMobileNumber(mobileNumber) {
     if (isEmptyOrNullUndefined(cleanedNumber)) {
         messages.push("Mobile number is required.");
     } else {
-        if (!/^\d{10}$/.test(cleanedNumber)) {
-            messages.push("Mobile number should contain exactly 10 digits.");
-        }
-    
-        if (!/^\d+$/.test(cleanedNumber)) {
-            messages.push("Mobile number should only contain digits (0-9).");
+        if (!/^[6-9]\d{9}$/.test(cleanedNumber)) {
+            messages.push("Mobile number should start with a digit between 6 and 9 and contain exactly 10 digits.");
         }
     }
 
     return { isValid: messages.length === 0, message: messages.join(' ') || 'Mobile number is valid.' };
 }
+
+
+
 
 // Validate email
 function isValidEmail(email) {

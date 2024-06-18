@@ -1,4 +1,4 @@
-const emailContent = {
+const adminRegistrationEmailContent = {
   subject: "Welcome to PlotBay - Your Registration Details",
   text: `Dear {{adminName}},
 
@@ -17,4 +17,4 @@ The PlotBay Team
 `,
 };
 
-module.exports = emailContent;
+module.exports = adminRegistrationEmailContent;

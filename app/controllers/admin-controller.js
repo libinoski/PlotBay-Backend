@@ -2,14 +2,14 @@ const path = require("path");
 const { Admin } = require("../models/admin-model");
 const { uploadAdminImageToS3 } = require("../config/s3-config");
 const transporter = require("../config/email-config");
-const emailContent = require("../utils/email-contents");
+const adminRegistrationEmailContent = require("../utils/email-contents");
 const { handleAdminImageUpload } = require("../config/multer-config");
 const { handleValidationError, handleDatabaseConflict } = require("../utils/error-handlers");
-const { validateAdminFields } = require("../utils/admin-field-validators"); // Adjust the path as necessary
+const { validateAdminFields } = require("../utils/admin-field-validators");
 
 exports.register = async (req, res) => {
   try {
-    // Handle file upload
+    // Handle file upload using multer
     handleAdminImageUpload(req, res, async function () {
       // Extract data from request
       const adminData = req.body;
@@ -33,28 +33,35 @@ exports.register = async (req, res) => {
 
         // Register admin and call model function
         const registrationResponse = await Admin.register(adminData);
+        
         // Send registration email
         const mailOptions = {
           from: process.env.EMAIL_USER,
           to: registrationResponse.adminEmail,
-          subject: emailContent.subject,
-          text: emailContent.text.replace("{{adminName}}", registrationResponse.adminName),
+          subject: adminRegistrationEmailContent.subject,
+          text: adminRegistrationEmailContent.text.replace("{{adminName}}", registrationResponse.adminName),
         };
 
-        transporter.sendMail(mailOptions, (error, info) => {
-          if (error) {
-            console.error("Error sending email: ", error);
-          } else {
-            console.log("Email sent: " + info.response);
-          }
-        });
+        try {
+          const info = await transporter.sendMail(mailOptions);
+          console.log("Email sent: " + info.response);
 
-        // Respond with success message 
-        return res.status(200).json({
-          status: "success",
-          message: "Admin registered successfully",
-          data: registrationResponse,
-        });
+          // Respond with success message 
+          return res.status(200).json({
+            status: "success",
+            message: "Admin registered successfully",
+            data: registrationResponse,
+          });
+        } catch (error) {
+          console.error("Error sending email: ", error);
+
+          // If sending email fails, still respond with success message for admin registration
+          return res.status(200).json({
+            status: "success",
+            message: "Admin registered successfully, but there was an error sending the confirmation email",
+            data: registrationResponse,
+          });
+        }
       } catch (error) {
         // Handle registration errors from model
         if (error.name === "ModelError") {
